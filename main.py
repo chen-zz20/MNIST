@@ -24,7 +24,7 @@ parser.add_argument('--learning_rate', type=float, default=1e-3,
 	help='Learning rate during optimization. Default: 1e-3')
 parser.add_argument('--test', default=False, action="store_true", 
 	help='True to train and False to inference. Default: True')
-parser.add_argument('--data_dir', type=str, default='../data',
+parser.add_argument('--data_dir', type=str, default='./data',
 	help='Data directory. Default: ../data')
 parser.add_argument('--train_dir', type=str, default='./train',
 	help='Training directory for saving model. Default: ./train')
