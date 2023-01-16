@@ -51,7 +51,7 @@ class Test_Data(Dataset):
 
         teX = (teX - 128.0) / 255.0
 
-        return  torch.Tensor(teX), torch.Tensor (teY).int()
+        return  torch.Tensor(teX), torch.Tensor(teY).int()
 
 
     def __getitem__(self, index):
