@@ -16,11 +16,13 @@ class Model(nn.Module):
 
 
     def forward(self, x:torch.tensor):
-        return self.net(x)
+        y = self.net(x)
+        y = torch.argmax(y, dim=1)
+        return y
 
 
 def calculate_acc(output, label):
-    correct = torch.sum(torch.argmax(output, dim=1) == label)
+    correct = torch.sum(output == label)
     return correct / len(label)
 
 
@@ -34,7 +36,7 @@ def train_epoch(model:torch.nn.Module, data_loader:torch.utils.data.DataLoader, 
 
         outputs = model(inputs)
         times += 1
-        loss = loss_metrics(torch.argmax(outputs, dim=1), labels)
+        loss = loss_metrics(outputs, labels)
 
         optimizer.zero_grad()
         loss.requires_grad_(True)
@@ -59,7 +61,7 @@ def test_epoch(model:torch.nn.Module, data_loader:torch.utils.data.DataLoader, l
 
         outputs = model(inputs)
         times += 1
-        loss = loss_metrics(torch.argmax(outputs, dim=1), labels)
+        loss = loss_metrics(outputs, labels)
 
         test_loss += loss.item()
         test_acc += calculate_acc(outputs, labels).cpu().data.numpy()
