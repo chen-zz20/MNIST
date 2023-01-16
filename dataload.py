@@ -22,7 +22,7 @@ class Train_Data(Dataset):
 
         trX = (trX - 128.0) / 255.0
 
-        return torch.Tensor(trX), torch.Tensor(trY)
+        return torch.Tensor(trX), torch.Tensor(trY).int()
 
 
     def __getitem__(self, index):
@@ -51,7 +51,7 @@ class Test_Data(Dataset):
 
         teX = (teX - 128.0) / 255.0
 
-        return  torch.Tensor(teX), torch.Tensor (teY)
+        return  torch.Tensor(teX), torch.Tensor (teY).int()
 
 
     def __getitem__(self, index):
@@ -60,3 +60,8 @@ class Test_Data(Dataset):
  
     def __len__(self):
         return self.test_len
+
+
+def onehot_encoding(label, class_num, device):
+    ones = torch.sparse.torch.eye(class_num, device=device)
+    return ones.index_select(0,label)

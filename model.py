@@ -1,6 +1,7 @@
 import torch
 import torch.utils.data
 import torch.nn as nn
+from dataload import onehot_encoding
 
 class Model(nn.Module):
     def __init__(self, input_dim: int, hidden_dim: int, output_dim: int):
@@ -16,13 +17,11 @@ class Model(nn.Module):
 
 
     def forward(self, x:torch.tensor):
-        y = self.net(x)
-        y = torch.argmax(y, dim=1)
-        return y
+        return self.net(x)
 
 
 def calculate_acc(output, label):
-    correct = torch.sum(output == label)
+    correct = torch.sum(torch.argmax(output, dim=1) == label)
     return correct / len(label)
 
 
@@ -36,13 +35,12 @@ def train_epoch(model:torch.nn.Module, data_loader:torch.utils.data.DataLoader, 
 
         outputs = model(inputs)
         times += 1
-        loss = loss_metrics(outputs, labels)
+        loss = loss_metrics(outputs, onehot_encoding(labels, 10, device))
 
         optimizer.zero_grad()
-        loss.requires_grad_(True)
         loss.backward()
         train_loss += loss.item()
-        train_acc += calculate_acc(outputs, labels)
+        train_acc += calculate_acc(outputs, labels).cpu().data.numpy()
         optimizer.step()
     
     train_loss = train_loss / times
@@ -61,7 +59,7 @@ def test_epoch(model:torch.nn.Module, data_loader:torch.utils.data.DataLoader, l
 
         outputs = model(inputs)
         times += 1
-        loss = loss_metrics(outputs, labels)
+        loss = loss_metrics(outputs, onehot_encoding(labels, 10, device))
 
         test_loss += loss.item()
         test_acc += calculate_acc(outputs, labels).cpu().data.numpy()

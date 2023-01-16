@@ -46,7 +46,7 @@ if __name__ == '__main__':
     model = Model(784, args.hidden_dim, 10).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
 
-    #tb_writer = SummaryWriter(args.log_dir)
+    tb_writer = SummaryWriter(args.log_dir)
 
     if args.pretrained is not None:
         model_path = os.path.join(args.train_dir, f"model-{args.pretrained}.pth.tar")
@@ -60,13 +60,12 @@ if __name__ == '__main__':
         begin = time.time()
         for epoch in tqdm(range(1, args.num_epochs+1)):
             train_loss , train_acc = train_epoch(model, train_loader, loss_metrics, optimizer, device)
-            #tb_writer.add_scalar("loss", train_loss, epoch)
-            #tb_writer.add_scalar("accuracy", train_acc, train_acc)
+            tb_writer.add_scalar("loss", train_loss, epoch)
+            tb_writer.add_scalar("accuracy", train_acc, train_acc)
 
             test_loss, test_acc = test_epoch(model, test_loader, loss_metrics, device)
-            print(f"{epoch}: loss:{train_loss} acc:{train_acc}")
-            #tb_writer.add_scalar("loss", test_loss, epoch)
-            #tb_writer.add_scalar("accuracy", test_acc, epoch)
+            tb_writer.add_scalar("loss", test_loss, epoch)
+            tb_writer.add_scalar("accuracy", test_acc, epoch)
         end = time.time()
         use_time = end - begin
         minutes = use_time // 60
@@ -79,7 +78,7 @@ if __name__ == '__main__':
         print("The final loss is %.3f, final accuracy is %.3f" % (test_loss, test_acc))
         with open(os.path.join(args.train_dir, f"model-{args.name}.pth.tar"), 'wb') as fout:
             torch.save(model, fout)
-        #tb_writer.close()
+        tb_writer.close()
         
     else:
         print("begin testing")
