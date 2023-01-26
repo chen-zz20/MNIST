@@ -30,7 +30,7 @@ parser.add_argument('--train_dir', type=str, default='./train',
 	help='Training directory for saving model. Default: ./train')
 parser.add_argument('--log_dir', type=str, 
 default='./log', 
-    help='The path of the log directory')
+    help='Log directory. Default: ./log')
 parser.add_argument('--name', type=str, default='test',
 	help='Give the model a name. Default: test')
 parser.add_argument('--pretrained', type=str, default=None,
@@ -46,16 +46,6 @@ if __name__ == '__main__':
     model = Model(784, args.hidden_dim, 10).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
 
-    log_dir = os.path.join(args.log_dir, 'train')
-    if not os.path.exists(log_dir):
-        os.mkdir(log_dir)
-    train_writer = SummaryWriter(log_dir=log_dir)
-
-    log_dir = os.path.join(args.log_dir, 'test')
-    if not os.path.exists(log_dir):
-        os.mkdir(log_dir)
-    test_writer = SummaryWriter(log_dir=log_dir)
-
     if args.pretrained is not None:
         model_path = os.path.join(args.train_dir, f"model-{args.pretrained}.pth.tar")
         if os.path.exists(model_path):
@@ -64,6 +54,15 @@ if __name__ == '__main__':
     loss_metrics = nn.MSELoss()
 
     if not args.test:
+        log_dir = os.path.join(args.log_dir, 'train')
+        if not os.path.exists(log_dir):
+            os.mkdir(log_dir)
+        train_writer = SummaryWriter(log_dir=log_dir)
+        log_dir = os.path.join(args.log_dir, 'test')
+        if not os.path.exists(log_dir):
+            os.mkdir(log_dir)
+        test_writer = SummaryWriter(log_dir=log_dir)
+        
         print("begin trainning")
         begin = time.time()
         for epoch in tqdm(range(1, args.num_epochs+1)):
