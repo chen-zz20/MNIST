@@ -25,7 +25,7 @@ def calculate_acc(output, label):
     return correct / len(label)
 
 
-def train_epoch(model:torch.nn.Module, data_loader:torch.utils.data.DataLoader, loss_metrics: torch.nn.Module, optimizer:torch.optim, device:str):
+def train_epoch(model:torch.nn.Module, data_loader:torch.utils.data.DataLoader, loss_metrics: torch.nn.Module, optimizer:torch.optim.Optimizer, device:str):
     model.train()
     train_loss, train_acc = 0.0, 0.0
     times = 0
